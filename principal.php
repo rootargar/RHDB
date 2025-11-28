@@ -1,14 +1,17 @@
 <?php
+// Incluir validación de autenticación y permisos
+require_once 'auth_check.php';
+
+// Verificar autenticación
+requerir_autenticacion();
+
 // Conexión a la base de datos
 include("conexion2.php");
 
-session_start();
-
-// Verificar si el usuario está logueado
-if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
-    header("Location: index.php");
-    exit();
-}
+// Obtener información del usuario
+$usuario_actual = get_usuario_actual();
+$rol_actual = get_rol_usuario();
+$nombre_completo = get_nombre_completo_usuario();
 
 // Consulta para contar empleados activos
 $sql_empleados = "SELECT COUNT(*) as total_empleados FROM usuarios";
@@ -583,35 +586,57 @@ $total_completados = $row_completados['total_completados'];
                 <i class="fas fa-home"></i>
                 <span>Inicio</span>
             </a>
+
+            <?php if (tiene_permiso($rol_actual, 'empleados')): ?>
             <a href="#empleados" class="menu-item" data-page="empleados">
                 <i class="fas fa-users"></i>
                 <span>Empleados</span>
             </a>
+            <?php endif; ?>
+
+            <?php if (tiene_permiso($rol_actual, 'cursos')): ?>
             <a href="#cursos" class="menu-item" data-page="cursos">
                 <i class="fas fa-user-graduate"></i>
                 <span>Cursos</span>
             </a>
+            <?php endif; ?>
+
+            <?php if (tiene_permiso($rol_actual, 'puestos')): ?>
             <a href="#puestos" class="menu-item" data-page="puestos">
                 <i class="fas fa-briefcase"></i>
                 <span>Puestos</span>
             </a>
+            <?php endif; ?>
+
+            <?php if (tiene_permiso($rol_actual, 'cursoxpuesto')): ?>
             <a href="#cursoxpuesto" class="menu-item" data-page="cursoxpuesto">
                 <i class="fas fa-clipboard-check"></i>
                 <span>Cursos Por Puesto</span>
             </a>
+            <?php endif; ?>
+
+            <?php if (tiene_permiso($rol_actual, 'planeacion')): ?>
             <a href="#planeacion" class="menu-item" data-page="planeacion">
                 <i class="fas fa-calendar-alt"></i>
                 <span>Programar Capacitación</span>
             </a>
+            <?php endif; ?>
+
+            <?php if (tiene_permiso($rol_actual, 'capacitacion')): ?>
             <a href="#capacitacion" class="menu-item" data-page="capacitacion">
                 <i class="fas fa-user-plus"></i>
                 <span>Asignar Participantes</span>
             </a>
+            <?php endif; ?>
+
+            <?php if (tiene_permiso($rol_actual, 'certificados')): ?>
             <a href="#certificados" class="menu-item" data-page="certificados">
                 <i class="fas fa-graduation-cap"></i>
                 <span>Capacitaciones y Certificados</span>
             </a>
-           
+            <?php endif; ?>
+
+            <?php if (tiene_permiso($rol_actual, 'reportes')): ?>
             <!-- Opción de Reportes en el menú lateral con submenú -->
             <li class="nav-item">
                 <a href="#reportes" class="nav-link" data-page="reportes">
@@ -620,6 +645,7 @@ $total_completados = $row_completados['total_completados'];
                     <i class="fas fa-angle-down ml-auto"></i>
                 </a>
                 <ul class="submenu" id="submenu-reportes">
+                    <?php if (es_administrador() || es_supervisor()): ?>
                     <li><a href="#reportes-empleados" class="nav-link">Empleados</a></li>
                     <li><a href="#reportes-cursos" class="nav-link">Cursos</a></li>
                     <li><a href="#reportes-puestos" class="nav-link">Puestos</a></li>
@@ -631,8 +657,15 @@ $total_completados = $row_completados['total_completados'];
                     <li><a href="#reportes-cursos-faltantes" class="nav-link">Cursos Faltantes</a></li>
                     <li><a href="#reportes-asistencias" class="nav-link">Asistencias</a></li>
                     <li><a href="#reportes-faltas" class="nav-link">Faltas</a></li>
+                    <?php endif; ?>
+
+                    <?php if (es_gerente()): ?>
+                    <li><a href="#reportes-cursos-concluidos" class="nav-link">Cursos Concluidos</a></li>
+                    <li><a href="#reportes-cursos-faltantes" class="nav-link">Cursos Faltantes</a></li>
+                    <?php endif; ?>
                 </ul>
             </li>
+            <?php endif; ?>
 
             <a href="logout.php" class="menu-item">
                 <i class="fas fa-sign-out-alt"></i>
@@ -647,7 +680,22 @@ $total_completados = $row_completados['total_completados'];
             <h2>Panel de Control</h2>
             <div class="user-info">
                 <i class="fas fa-user-circle"></i>
-                <span>Bienvenido, <span class="user-name"><?php echo htmlspecialchars($_SESSION['usuario']); ?></span></span>
+                <span>
+                    <?php echo $nombre_completo ? htmlspecialchars($nombre_completo) : htmlspecialchars($usuario_actual); ?>
+                    <br>
+                    <small style="font-size: 0.8em; opacity: 0.8;">
+                        <?php
+                        $badge_color = '#6c757d';
+                        if ($rol_actual === ROL_ADMINISTRADOR) $badge_color = '#dc3545';
+                        elseif ($rol_actual === ROL_SUPERVISOR) $badge_color = '#0d6efd';
+                        elseif ($rol_actual === ROL_INSTRUCTOR) $badge_color = '#0dcaf0';
+                        elseif ($rol_actual === ROL_GERENTE) $badge_color = '#198754';
+                        ?>
+                        <span style="background-color: <?php echo $badge_color; ?>; padding: 2px 8px; border-radius: 10px; color: white;">
+                            <?php echo htmlspecialchars($rol_actual); ?>
+                        </span>
+                    </small>
+                </span>
             </div>
         </div>
 
@@ -685,6 +733,7 @@ $total_completados = $row_completados['total_completados'];
             </div>
 
             <div class="card-container">
+                <?php if (tiene_permiso($rol_actual, 'empleados')): ?>
                 <a href="#empleados" class="card" data-target="empleados">
                     <div class="card-icon">
                         <i class="fas fa-users"></i>
@@ -693,7 +742,9 @@ $total_completados = $row_completados['total_completados'];
                     <p>Gestione la información de los empleados, agregue nuevos, actualice</p>
                     <span class="btn">Acceder</span>
                 </a>
-                
+                <?php endif; ?>
+
+                <?php if (tiene_permiso($rol_actual, 'cursos')): ?>
                 <a href="#cursos" class="card" data-target="cursos">
                     <div class="card-icon">
                         <i class="fas fa-user-graduate"></i>
@@ -702,7 +753,9 @@ $total_completados = $row_completados['total_completados'];
                     <p>Administre los cursos disponibles, cree nuevos cursos y actualice la información.</p>
                     <span class="btn">Acceder</span>
                 </a>
-                
+                <?php endif; ?>
+
+                <?php if (tiene_permiso($rol_actual, 'puestos')): ?>
                 <a href="#puestos" class="card" data-target="puestos">
                     <div class="card-icon">
                         <i class="fas fa-briefcase"></i>
@@ -711,16 +764,20 @@ $total_completados = $row_completados['total_completados'];
                     <p>Gestione los puestos de trabajo, sus descripciones y requisitos.</p>
                     <span class="btn">Acceder</span>
                 </a>
+                <?php endif; ?>
 
+                <?php if (tiene_permiso($rol_actual, 'cursoxpuesto')): ?>
                 <a href="#cursoxpuesto" class="card" data-target="cursoxpuesto">
                     <div class="card-icon">
                         <i class="fas fa-clipboard-check"></i>
                     </div>
                     <h3>Asigna Cursos a Cada puesto</h3>
-                    <p>Gestione los puestos de trabajo, sus descripciones y requisitos.</p>
+                    <p>Defina los Cursos a cada puesto de trabajo.</p>
                     <span class="btn">Acceder</span>
                 </a>
-                
+                <?php endif; ?>
+
+                <?php if (tiene_permiso($rol_actual, 'planeacion')): ?>
                 <a href="#planeacion" class="card" data-target="planeacion">
                     <div class="card-icon">
                         <i class="fas fa-calendar-alt"></i>
@@ -729,6 +786,9 @@ $total_completados = $row_completados['total_completados'];
                     <p>Programe nuevas capacitaciones, asigne instructores y participantes.</p>
                     <span class="btn">Acceder</span>
                 </a>
+                <?php endif; ?>
+
+                <?php if (tiene_permiso($rol_actual, 'capacitacion')): ?>
                 <a href="#capacitacion" class="card" data-target="capacitacion">
                     <div class="card-icon">
                         <i class="fas fa-user-plus"></i>
@@ -737,6 +797,9 @@ $total_completados = $row_completados['total_completados'];
                     <p>Programe nuevas capacitaciones, asigne instructores y participantes.</p>
                     <span class="btn">Acceder</span>
                 </a>
+                <?php endif; ?>
+
+                <?php if (tiene_permiso($rol_actual, 'certificados')): ?>
                 <a href="#certificados" class="card" data-target="certificados">
                     <div class="card-icon">
                         <i class="fas fa-graduation-cap"></i>
@@ -745,8 +808,9 @@ $total_completados = $row_completados['total_completados'];
                     <p>Consulte capacitaciones  y Certificados obtenidos.</p>
                     <span class="btn">Acceder</span>
                 </a>
-              
-              
+                <?php endif; ?>
+
+                <?php if (tiene_permiso($rol_actual, 'reportes')): ?>
                 <a href="#reportes" class="card" data-target="reportes">
                     <div class="card-icon">
                         <i class="fas fa-chart-bar"></i>
@@ -755,15 +819,18 @@ $total_completados = $row_completados['total_completados'];
                     <p>Genere informes detallados sobre las capacitaciones, asistencia y rendimiento.</p>
                     <span class="btn">Acceder</span>
                 </a>
-               <a href="https://kwdaf.freshdesk.com/support/solutions" class="card" target="_blank">
-                <div class="card-icon">
-                    <i class="fas fa-sitemap"></i>
-                </div>
-                <h3>Enlace a Politicas Y Procesos</h3>
-                <p>Accede a Politicas Y Procesos de la Empresa.</p>
-                <span class="btn">Acceder</span>
-            </a>
-               </div>
+                <?php endif; ?>
+
+                <!-- Enlace externo disponible para todos los usuarios -->
+                <a href="https://kwdaf.freshdesk.com/support/solutions" class="card" target="_blank">
+                    <div class="card-icon">
+                        <i class="fas fa-sitemap"></i>
+                    </div>
+                    <h3>Enlace a Politicas Y Procesos</h3>
+                    <p>Accede a Politicas Y Procesos de la Empresa.</p>
+                    <span class="btn">Acceder</span>
+                </a>
+            </div>
         </div>
 
         <!-- Página de Empleados -->
@@ -887,7 +954,7 @@ $total_completados = $row_completados['total_completados'];
                 $('#reportes').addClass('active');
             });
             
-            // Mapeo de rutas hash a archivos PHP
+            // Mapeo de rutas hash a archivos PHP (incluye los 4 nuevos reportes)
             const reportesFiles = {
                 '#reportes-empleados': 'reportes/empleados.php',
                 '#reportes-cursos': 'reportes/cursos.php',
