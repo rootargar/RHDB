@@ -47,7 +47,7 @@ BEGIN
     CREATE TABLE email_logs (
         Id INT IDENTITY(1,1) PRIMARY KEY,
         IdCapacitacion INT NULL,
-        IdEmpleado NVARCHAR(20) NULL,
+        IdEmpleado INT NULL,
         EmailDestino NVARCHAR(100) NOT NULL,
         TipoNotificacion NVARCHAR(50) NOT NULL,
         Asunto NVARCHAR(255) NOT NULL,
