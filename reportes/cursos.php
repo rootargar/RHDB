@@ -11,15 +11,15 @@ $filtroArea = isset($_GET['area']) && $_GET['area'] != '' ? $_GET['area'] : null
 
 // Construir consulta con filtros
 $sql = "SELECT
-    c.IdCurso,
+    c.Id as IdCurso,
     c.Area,
     c.NombreCurso,
     COUNT(DISTINCT cap.Id) as TotalCapacitaciones,
     COUNT(DISTINCT CASE WHEN cap.Asistio = 'Si' THEN cap.Id END) as TotalAsistencias,
     COUNT(DISTINCT pc.IdPlan) as VecesImpartido
 FROM cursos c
-LEFT JOIN capacitaciones cap ON c.IdCurso = cap.IdCurso
-LEFT JOIN plancursos pc ON c.IdCurso = pc.IdCurso";
+LEFT JOIN plancursos pc ON c.Id = pc.IdCursoBase
+LEFT JOIN capacitaciones cap ON pc.IdPlan = cap.IdPlan";
 
 $params = array();
 $whereConditions = array();
@@ -33,7 +33,7 @@ if(count($whereConditions) > 0) {
     $sql .= " WHERE " . implode(" AND ", $whereConditions);
 }
 
-$sql .= " GROUP BY c.IdCurso, c.Area, c.NombreCurso
+$sql .= " GROUP BY c.Id, c.Area, c.NombreCurso
 ORDER BY c.Area, c.NombreCurso";
 
 $stmt = sqlsrv_query($conn, $sql, $params);

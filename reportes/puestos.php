@@ -18,7 +18,7 @@ $sql = "SELECT
     COUNT(DISTINCT cp.IdCurso) as CursosRequeridos,
     COUNT(DISTINCT ap.IdActividad) as ActividadesRequeridas
 FROM puestos p
-LEFT JOIN usuarios u ON p.puesto = u.Puesto
+LEFT JOIN usuarios u ON p.Id = u.idPuesto
 LEFT JOIN cursoxpuesto cp ON p.puesto = cp.puesto
 LEFT JOIN ActividadesXPuesto ap ON p.puesto = ap.puesto";
 
@@ -49,7 +49,7 @@ $sqlStats = "SELECT
     COUNT(DISTINCT u.Clave) as TotalEmpleados,
     COUNT(DISTINCT cp.IdCurso) as TotalCursosAsignados
 FROM puestos p
-LEFT JOIN usuarios u ON p.puesto = u.Puesto
+LEFT JOIN usuarios u ON p.Id = u.idPuesto
 LEFT JOIN cursoxpuesto cp ON p.puesto = cp.puesto";
 
 $stmtStats = sqlsrv_query($conn, $sqlStats);
