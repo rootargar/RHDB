@@ -3,10 +3,20 @@
 include '../conexion2.php';
 
 // Obtener datos para filtros
-$sqlDeptos = "SELECT DISTINCT Departamento FROM capacitaciones WHERE Departamento IS NOT NULL ORDER BY Departamento";
+$sqlDeptos = "SELECT DISTINCT p.depto AS Departamento
+              FROM capacitaciones c
+              LEFT JOIN usuarios u ON c.IdEmp = u.Clave
+              LEFT JOIN puestos p ON u.idPuesto = p.Id
+              WHERE p.depto IS NOT NULL
+              ORDER BY p.depto";
 $stmtDeptos = sqlsrv_query($conn, $sqlDeptos);
 
-$sqlCursos = "SELECT DISTINCT NomCurso FROM capacitaciones WHERE NomCurso IS NOT NULL ORDER BY NomCurso";
+$sqlCursos = "SELECT DISTINCT cr.NombreCurso AS NomCurso
+              FROM capacitaciones c
+              LEFT JOIN plancursos pc ON c.IdPlan = pc.IdPlan
+              LEFT JOIN cursos cr ON pc.IdCursoBase = cr.Id
+              WHERE cr.NombreCurso IS NOT NULL
+              ORDER BY cr.NombreCurso";
 $stmtCursos = sqlsrv_query($conn, $sqlCursos);
 
 // Procesar filtros
@@ -19,26 +29,30 @@ $filtroFechaFin = isset($_GET['fecha_fin']) && $_GET['fecha_fin'] != '' ? $_GET[
 $sql = "SELECT
     cap.Id,
     cap.IdEmp,
-    cap.Empleado,
-    cap.Puesto,
-    cap.Departamento,
-    cap.NomCurso,
-    cap.Area,
+    u.NombreCompleto AS Empleado,
+    p.puesto AS Puesto,
+    p.depto AS Departamento,
+    cr.NombreCurso AS NomCurso,
+    cr.Area,
     cap.FechaIni,
     cap.FechaFin,
     CASE WHEN cap.ruta_archivo IS NOT NULL AND cap.ruta_archivo != '' THEN 'Sí' ELSE 'No' END as TieneCertificado
 FROM capacitaciones cap
+LEFT JOIN usuarios u ON cap.IdEmp = u.Clave
+LEFT JOIN plancursos pc ON cap.IdPlan = pc.IdPlan
+LEFT JOIN cursos cr ON pc.IdCursoBase = cr.Id
+LEFT JOIN puestos p ON u.idPuesto = p.Id
 WHERE cap.Asistio = 'Si'";
 
 $params = array();
 
 if($filtroDepto) {
-    $sql .= " AND cap.Departamento = ?";
+    $sql .= " AND p.depto = ?";
     $params[] = $filtroDepto;
 }
 
 if($filtroCurso) {
-    $sql .= " AND cap.NomCurso = ?";
+    $sql .= " AND cr.NombreCurso = ?";
     $params[] = $filtroCurso;
 }
 
@@ -52,7 +66,7 @@ if($filtroFechaFin) {
     $params[] = $filtroFechaFin;
 }
 
-$sql .= " ORDER BY cap.FechaIni DESC, cap.Empleado";
+$sql .= " ORDER BY cap.FechaIni DESC, u.NombreCompleto";
 
 $stmt = sqlsrv_query($conn, $sql, $params);
 
@@ -63,11 +77,12 @@ if($stmt === false) {
 // Calcular estadísticas
 $sqlStats = "SELECT
     COUNT(*) as TotalAsistencias,
-    COUNT(DISTINCT IdEmp) as EmpleadosUnicos,
-    COUNT(DISTINCT NomCurso) as CursosUnicos,
-    COUNT(CASE WHEN ruta_archivo IS NOT NULL AND ruta_archivo != '' THEN 1 END) as ConCertificado
-FROM capacitaciones
-WHERE Asistio = 'Si'";
+    COUNT(DISTINCT cap.IdEmp) as EmpleadosUnicos,
+    COUNT(DISTINCT pc.IdCursoBase) as CursosUnicos,
+    COUNT(CASE WHEN cap.ruta_archivo IS NOT NULL AND cap.ruta_archivo != '' THEN 1 END) as ConCertificado
+FROM capacitaciones cap
+LEFT JOIN plancursos pc ON cap.IdPlan = pc.IdPlan
+WHERE cap.Asistio = 'Si'";
 
 $stmtStats = sqlsrv_query($conn, $sqlStats);
 $stats = sqlsrv_fetch_array($stmtStats, SQLSRV_FETCH_ASSOC);
