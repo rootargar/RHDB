@@ -15,12 +15,10 @@ $sql = "SELECT
     p.puesto,
     p.depto,
     COUNT(DISTINCT u.Clave) as TotalEmpleados,
-    COUNT(DISTINCT cp.IdCurso) as CursosRequeridos,
-    COUNT(DISTINCT ap.IdActividad) as ActividadesRequeridas
+    COUNT(DISTINCT cp.IdCurso) as CursosRequeridos
 FROM puestos p
 LEFT JOIN usuarios u ON p.Id = u.idPuesto
-LEFT JOIN cursoxpuesto cp ON p.Id = cp.idPuesto
-LEFT JOIN ActividadesXPuesto ap ON p.puesto = ap.puesto";
+LEFT JOIN cursoxpuesto cp ON p.Id = cp.idPuesto";
 
 $params = array();
 $whereConditions = array();
@@ -172,7 +170,6 @@ $stats = sqlsrv_fetch_array($stmtStats, SQLSRV_FETCH_ASSOC);
                         <th>Departamento</th>
                         <th>Total Empleados</th>
                         <th>Cursos Requeridos</th>
-                        <th>Actividades Requeridas</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -189,11 +186,6 @@ $stats = sqlsrv_fetch_array($stmtStats, SQLSRV_FETCH_ASSOC);
                         <td>
                             <span class="badge bg-success">
                                 <?php echo htmlspecialchars($row['CursosRequeridos']); ?>
-                            </span>
-                        </td>
-                        <td>
-                            <span class="badge bg-info">
-                                <?php echo htmlspecialchars($row['ActividadesRequeridas']); ?>
                             </span>
                         </td>
                     </tr>
