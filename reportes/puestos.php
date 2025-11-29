@@ -19,7 +19,7 @@ $sql = "SELECT
     COUNT(DISTINCT ap.IdActividad) as ActividadesRequeridas
 FROM puestos p
 LEFT JOIN usuarios u ON p.Id = u.idPuesto
-LEFT JOIN cursoxpuesto cp ON p.puesto = cp.puesto
+LEFT JOIN cursoxpuesto cp ON p.Id = cp.idPuesto
 LEFT JOIN ActividadesXPuesto ap ON p.puesto = ap.puesto";
 
 $params = array();
@@ -50,7 +50,7 @@ $sqlStats = "SELECT
     COUNT(DISTINCT cp.IdCurso) as TotalCursosAsignados
 FROM puestos p
 LEFT JOIN usuarios u ON p.Id = u.idPuesto
-LEFT JOIN cursoxpuesto cp ON p.puesto = cp.puesto";
+LEFT JOIN cursoxpuesto cp ON p.Id = cp.idPuesto";
 
 $stmtStats = sqlsrv_query($conn, $sqlStats);
 $stats = sqlsrv_fetch_array($stmtStats, SQLSRV_FETCH_ASSOC);
