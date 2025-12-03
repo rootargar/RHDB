@@ -119,14 +119,14 @@ if (isset($_POST['exportar_excel'])) {
             <tbody>';
     
     // Obtener los datos de la tabla capacitaciones para SQL Server con la nueva estructura
-    $sql = "SELECT c.Id, c.IdEmp, u.NombreCompleto AS Empleado, p.puesto AS Puesto, 
-                  c.FechaIni, c.FechaFin, pc.IdCursoBase AS IdCurso, cu.NombreCurso, c.ruta_archivo 
+    $sql = "SELECT c.Id, c.IdEmp, u.NombreCompleto AS Empleado, p.puesto AS Puesto,
+                  c.FechaIni, c.FechaFin, pc.IdCursoBase AS IdCurso, cu.NombreCurso, c.ruta_archivo
             FROM capacitaciones c
             INNER JOIN usuarios u ON c.IdEmp = u.Clave
             INNER JOIN puestos p ON u.idPuesto = p.Id
             INNER JOIN plancursos pc ON c.IdPlan = pc.IdPlan
             INNER JOIN cursos cu ON pc.IdCursoBase = cu.Id
-            WHERE c.Asistio = 'Si' 
+            WHERE c.Asistio = 'Si' AND pc.Estado = 'Completado'
             ORDER BY u.NombreCompleto";
     $stmt = sqlsrv_query($conn, $sql);
     
@@ -250,14 +250,14 @@ if (isset($_POST['exportar_excel'])) {
                         <tbody>
                             <?php
                             // Obtener los datos de la tabla capacitaciones con la nueva estructura
-                            $sql = "SELECT c.Id, c.IdEmp, u.NombreCompleto AS Empleado, p.puesto AS Puesto, 
-                                    c.FechaIni, c.FechaFin, pc.IdCursoBase AS IdCurso, cu.NombreCurso, c.ruta_archivo 
+                            $sql = "SELECT c.Id, c.IdEmp, u.NombreCompleto AS Empleado, p.puesto AS Puesto,
+                                    c.FechaIni, c.FechaFin, pc.IdCursoBase AS IdCurso, cu.NombreCurso, c.ruta_archivo
                                 FROM capacitaciones c
                                 INNER JOIN usuarios u ON c.IdEmp = u.Clave
                                 INNER JOIN puestos p ON u.idPuesto = p.Id
                                 INNER JOIN plancursos pc ON c.IdPlan = pc.IdPlan
                                 INNER JOIN cursos cu ON pc.IdCursoBase = cu.Id
-                                WHERE c.Asistio = 'Si' 
+                                WHERE c.Asistio = 'Si' AND pc.Estado = 'Completado'
                                 ORDER BY u.NombreCompleto";
                             $stmt = sqlsrv_query($conn, $sql);
                             
