@@ -311,9 +311,11 @@ function buildPaginationUrl($pagina) {
                         <label for="filtro_rol" class="form-label">Filtrar por Rol</label>
                         <select class="form-select" id="filtro_rol" name="filtro_rol">
                             <option value="">Todos los roles</option>
-                            <option value="admin" <?php echo $filtro_rol === 'admin' ? 'selected' : ''; ?>>Administrador</option>
-                            <option value="usuario" <?php echo $filtro_rol === 'usuario' ? 'selected' : ''; ?>>Usuario</option>
-                            <option value="supervisor" <?php echo $filtro_rol === 'supervisor' ? 'selected' : ''; ?>>Supervisor</option>
+                            <option value="Administrador" <?php echo $filtro_rol === 'Administrador' ? 'selected' : ''; ?>>Administrador</option>
+                            <option value="Supervisor" <?php echo $filtro_rol === 'Supervisor' ? 'selected' : ''; ?>>Supervisor</option>
+                            <option value="Instructor" <?php echo $filtro_rol === 'Instructor' ? 'selected' : ''; ?>>Instructor</option>
+                            <option value="Gerente" <?php echo $filtro_rol === 'Gerente' ? 'selected' : ''; ?>>Gerente</option>
+                            <option value="Empleado" <?php echo $filtro_rol === 'Empleado' ? 'selected' : ''; ?>>Empleado</option>
                         </select>
                     </div>
                     
@@ -406,9 +408,11 @@ function buildPaginationUrl($pagina) {
                             <label for="rol" class="form-label">Rol</label>
                             <select class="form-select" id="rol" name="rol" required>
                                 <option value="" disabled <?php echo !$userToEdit ? 'selected' : ''; ?>>Seleccione un rol</option>
-                                <option value="admin" <?php echo $userToEdit && $userToEdit['rol'] === 'admin' ? 'selected' : ''; ?>>Administrador</option>
-                                <option value="usuario" <?php echo $userToEdit && $userToEdit['rol'] === 'usuario' ? 'selected' : ''; ?>>Usuario</option>
-                                <option value="supervisor" <?php echo $userToEdit && $userToEdit['rol'] === 'supervisor' ? 'selected' : ''; ?>>Supervisor</option>
+                                <option value="Administrador" <?php echo $userToEdit && $userToEdit['rol'] === 'Administrador' ? 'selected' : ''; ?>>Administrador</option>
+                                <option value="Supervisor" <?php echo $userToEdit && $userToEdit['rol'] === 'Supervisor' ? 'selected' : ''; ?>>Supervisor</option>
+                                <option value="Instructor" <?php echo $userToEdit && $userToEdit['rol'] === 'Instructor' ? 'selected' : ''; ?>>Instructor</option>
+                                <option value="Gerente" <?php echo $userToEdit && $userToEdit['rol'] === 'Gerente' ? 'selected' : ''; ?>>Gerente</option>
+                                <option value="Empleado" <?php echo $userToEdit && $userToEdit['rol'] === 'Empleado' ? 'selected' : ''; ?>>Empleado</option>
                             </select>
                         </div>
                     </div>
@@ -492,11 +496,13 @@ function buildPaginationUrl($pagina) {
                                         <td><?php echo $usuario['usuario']; ?></td>
                                         <td><?php echo $usuario['correo']; ?></td>
                                         <td>
-                                            <span class="badge bg-<?php 
-                                                echo $usuario['rol'] === 'admin' ? 'danger' : 
-                                                    ($usuario['rol'] === 'supervisor' ? 'warning' : 'info'); 
+                                            <span class="badge bg-<?php
+                                                echo $usuario['rol'] === 'Administrador' ? 'danger' :
+                                                    ($usuario['rol'] === 'Supervisor' ? 'warning' :
+                                                    ($usuario['rol'] === 'Instructor' ? 'primary' :
+                                                    ($usuario['rol'] === 'Gerente' ? 'success' : 'info')));
                                             ?>">
-                                                <?php echo ucfirst($usuario['rol']); ?>
+                                                <?php echo $usuario['rol']; ?>
                                             </span>
                                         </td>
                                         <td>

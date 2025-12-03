@@ -11,18 +11,19 @@ $fechaIni = '';
 $fechaFin = '';
 $area = '';
 $idCursoBase = '';
+$estadoCurso = '';
 $fechaIniObj = null;
 $fechaFinObj = null;
 
 // Si hay un ID de plan en la URL, cargar los detalles del curso
 if (!empty($idPlan)) {
-    $sql = "SELECT p.*, c.NombreCurso, c.Id as IdCursoBase, c.Area 
-             FROM plancursos p 
+    $sql = "SELECT p.*, c.NombreCurso, c.Id as IdCursoBase, c.Area
+             FROM plancursos p
              LEFT JOIN cursos c ON p.IdCursoBase = c.Id
              WHERE p.IdPlan = ?";
     $params = array($idPlan);
     $stmt = sqlsrv_prepare($conn, $sql, $params);
-    
+
     if (sqlsrv_execute($stmt)) {
         $curso = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC);
         if ($curso) {
@@ -32,7 +33,8 @@ if (!empty($idPlan)) {
             $fechaFin = $curso['FechaFin'] instanceof DateTime ? $curso['FechaFin']->format('Y-m-d') : '';
             $area = $curso['Area'];
             $idCursoBase = $curso['IdCursoBase'];
-            
+            $estadoCurso = $curso['Estado'];
+
             // Crear objetos DateTime para las fechas (necesarios para consultas)
             if (!empty($fechaIni)) {
                 $fechaIniObj = date_create_from_format('Y-m-d', $fechaIni);
@@ -55,21 +57,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $idPlan = $_POST['idPlan'];
         $fechaIni = $_POST['fechaIni'];
         $fechaFin = $_POST['fechaFin'];
-        
-        // Convertir fechas a objetos DateTime
-        $fechaIniObj = null;
-        $fechaFinObj = null;
-        
-        if (!empty($fechaIni)) {
-            $fechaIniObj = date_create_from_format('Y-m-d', $fechaIni);
-        }
-        
-        if (!empty($fechaFin)) {
-            $fechaFinObj = date_create_from_format('Y-m-d', $fechaFin);
-        }
-        
-        // Verificar si se han seleccionado empleados
-        if (isset($_POST['empleados']) && !empty($_POST['empleados'])) {
+        $estadoCurso = $_POST['estadoCurso'];
+
+        // Validar que el curso no esté Completado o Cancelado
+        if ($estadoCurso === 'Completado' || $estadoCurso === 'Cancelado') {
+            $mensaje = "No se pueden asignar participantes a capacitaciones con estado '$estadoCurso'.";
+        } else {
+            // Convertir fechas a objetos DateTime
+            $fechaIniObj = null;
+            $fechaFinObj = null;
+
+            if (!empty($fechaIni)) {
+                $fechaIniObj = date_create_from_format('Y-m-d', $fechaIni);
+            }
+
+            if (!empty($fechaFin)) {
+                $fechaFinObj = date_create_from_format('Y-m-d', $fechaFin);
+            }
+
+            // Verificar si se han seleccionado empleados
+            if (isset($_POST['empleados']) && !empty($_POST['empleados'])) {
             $empleadosSeleccionados = $_POST['empleados'];
             $errores = [];
             $exitos = 0;
@@ -126,8 +133,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             if (!empty($errores)) {
                 $mensaje .= " Hubieron algunos errores: " . implode(". ", $errores);
             }
-        } else {
-            $mensaje = "Por favor, seleccione al menos un empleado para asignar al curso.";
+            } else {
+                $mensaje = "Por favor, seleccione al menos un empleado para asignar al curso.";
+            }
         }
     } elseif (isset($_POST['eliminar_participante'])) {
         // Eliminar participante
@@ -145,15 +153,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Actualizar estado de asistencia
         $idCapacitacion = $_POST['idCapacitacion'];
         $asistio = $_POST['asistio'];
-        
-        $sql = "UPDATE capacitaciones SET Asistio = ? WHERE Id = ?";
-        $params = array($asistio, $idCapacitacion);
-        $stmt = sqlsrv_prepare($conn, $sql, $params);
-        
-        if (sqlsrv_execute($stmt)) {
-            $mensaje = "Asistencia actualizada correctamente.";
+        $estadoCurso = $_POST['estadoCurso'];
+
+        // Validar que el curso esté Completado para marcar asistencia
+        if ($estadoCurso !== 'Completado') {
+            $mensaje = "Solo se puede marcar asistencia en capacitaciones con estado 'Completado'.";
         } else {
-            $mensaje = "Error al actualizar la asistencia: " . print_r(sqlsrv_errors(), true);
+            $sql = "UPDATE capacitaciones SET Asistio = ? WHERE Id = ?";
+            $params = array($asistio, $idCapacitacion);
+            $stmt = sqlsrv_prepare($conn, $sql, $params);
+
+            if (sqlsrv_execute($stmt)) {
+                $mensaje = "Asistencia actualizada correctamente.";
+            } else {
+                $mensaje = "Error al actualizar la asistencia: " . print_r(sqlsrv_errors(), true);
+            }
         }
     }
 }
@@ -366,12 +380,28 @@ if ($cursoSeleccionado) {
                             <p><strong>Área:</strong> <?php echo $area; ?></p>
                             <p><strong>Fecha Inicio:</strong> <?php echo $fechaIni; ?></p>
                             <p><strong>Fecha Fin:</strong> <?php echo $fechaFin; ?></p>
+                            <p><strong>Estado:</strong>
+                                <span class="badge <?php
+                                    echo $estadoCurso === 'Programado' ? 'badge-primary' :
+                                        ($estadoCurso === 'En proceso' ? 'badge-warning' :
+                                        ($estadoCurso === 'Completado' ? 'badge-success' : 'badge-danger'));
+                                ?>">
+                                    <?php echo $estadoCurso; ?>
+                                </span>
+                            </p>
+                            <?php if ($estadoCurso === 'Completado' || $estadoCurso === 'Cancelado'): ?>
+                                <div class="alert alert-warning">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                    No se pueden asignar participantes a capacitaciones con estado "<?php echo $estadoCurso; ?>".
+                                </div>
+                            <?php endif; ?>
                             <a href="asignar_participantes.php" class="btn btn-secondary">
                                 <i class="fas fa-arrow-left"></i> Volver a la lista de cursos
                             </a>
                         </div>
                     </div>
                     
+                    <?php if ($estadoCurso !== 'Completado' && $estadoCurso !== 'Cancelado'): ?>
                     <div class="card mt-4">
                         <div class="card-header bg-success text-white">
                             <h5 class="mb-0">Seleccionar Participantes</h5>
@@ -381,6 +411,7 @@ if ($cursoSeleccionado) {
                                 <input type="hidden" name="idPlan" value="<?php echo $idPlan; ?>">
                                 <input type="hidden" name="fechaIni" value="<?php echo $fechaIni; ?>">
                                 <input type="hidden" name="fechaFin" value="<?php echo $fechaFin; ?>">
+                                <input type="hidden" name="estadoCurso" value="<?php echo $estadoCurso; ?>">
                                 
                                 <div class="form-group">
                                     <label for="empleadoFiltro">Buscar empleados:</label>
@@ -428,6 +459,7 @@ if ($cursoSeleccionado) {
                             </form>
                         </div>
                     </div>
+                    <?php endif; ?>
                 </div>
                 
                 <div class="col-md-7">
@@ -479,24 +511,31 @@ if ($cursoSeleccionado) {
                                                 
                                                 echo "<td class='text-center'>";
                                                 echo "<div class='btn-group'>";
-                                                
-                                                // Botones para marcar asistencia
+
+                                                // Botones para marcar asistencia (solo si está Completado)
+                                                $disabledAsistencia = ($estadoCurso !== 'Completado') ? 'disabled' : '';
+                                                $titleAsistencia = ($estadoCurso !== 'Completado') ? 'Solo disponible para capacitaciones completadas' : '';
+
                                                 echo "<form method='post' action='" . htmlspecialchars($_SERVER["PHP_SELF"]) . "?id=" . $idPlan . "' style='display:inline;'>";
                                                 echo "<input type='hidden' name='idCapacitacion' value='" . $participante['Id'] . "'>";
                                                 echo "<input type='hidden' name='asistio' value='Si'>";
-                                                echo "<button type='submit' name='actualizar_asistencia' class='btn btn-sm btn-success btn-asistencia' title='Marcar como asistió'>";
+                                                echo "<input type='hidden' name='estadoCurso' value='" . $estadoCurso . "'>";
+                                                echo "<button type='submit' name='actualizar_asistencia' class='btn btn-sm btn-success btn-asistencia' " .
+                                                     "title='" . ($estadoCurso === 'Completado' ? 'Marcar como asistió' : $titleAsistencia) . "' $disabledAsistencia>";
                                                 echo "<i class='fas fa-check'></i>";
                                                 echo "</button>";
                                                 echo "</form> ";
-                                                
+
                                                 echo "<form method='post' action='" . htmlspecialchars($_SERVER["PHP_SELF"]) . "?id=" . $idPlan . "' style='display:inline;'>";
                                                 echo "<input type='hidden' name='idCapacitacion' value='" . $participante['Id'] . "'>";
                                                 echo "<input type='hidden' name='asistio' value='No'>";
-                                                echo "<button type='submit' name='actualizar_asistencia' class='btn btn-sm btn-danger btn-asistencia' title='Marcar como no asistió'>";
+                                                echo "<input type='hidden' name='estadoCurso' value='" . $estadoCurso . "'>";
+                                                echo "<button type='submit' name='actualizar_asistencia' class='btn btn-sm btn-danger btn-asistencia' " .
+                                                     "title='" . ($estadoCurso === 'Completado' ? 'Marcar como no asistió' : $titleAsistencia) . "' $disabledAsistencia>";
                                                 echo "<i class='fas fa-times'></i>";
                                                 echo "</button>";
                                                 echo "</form> ";
-                                                
+
                                                 // Botón para eliminar
                                                 echo "<form method='post' action='" . htmlspecialchars($_SERVER["PHP_SELF"]) . "?id=" . $idPlan . "' style='display:inline;'>";
                                                 echo "<input type='hidden' name='idCapacitacion' value='" . $participante['Id'] . "'>";
@@ -504,7 +543,7 @@ if ($cursoSeleccionado) {
                                                 echo "<i class='fas fa-trash'></i>";
                                                 echo "</button>";
                                                 echo "</form>";
-                                                
+
                                                 echo "</div>";
                                                 echo "</td>";
                                                 echo "</tr>";
