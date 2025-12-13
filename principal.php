@@ -84,25 +84,28 @@ $total_completados = $row_completados['total_completados'];
             </a>
             <?php endif; ?>
 
-            <?php if (tiene_permiso($rol_actual, 'planeacion')): ?>
-            <a href="#planeacion" class="nav-item" data-page="planeacion">
-                <i class="fas fa-calendar-alt"></i>
-                <span>Programar Capacitación</span>
-            </a>
-            <?php endif; ?>
+            <?php if (tiene_permiso($rol_actual, 'planeacion') || tiene_permiso($rol_actual, 'capacitacion') || tiene_permiso($rol_actual, 'certificados')): ?>
+            <!-- Dropdown de Capacitaciones -->
+            <div class="nav-dropdown">
+                <a href="#capacitaciones-menu" class="nav-item dropdown-toggle" data-page="capacitaciones-menu">
+                    <i class="fas fa-graduation-cap"></i>
+                    <span>Capacitaciones</span>
+                    <i class="fas fa-angle-down"></i>
+                </a>
+                <div class="dropdown-menu" id="dropdown-capacitaciones">
+                    <?php if (tiene_permiso($rol_actual, 'planeacion')): ?>
+                    <a href="#planeacion" class="dropdown-item" data-page="planeacion">Programar Capacitación</a>
+                    <?php endif; ?>
 
-            <?php if (tiene_permiso($rol_actual, 'capacitacion')): ?>
-            <a href="#capacitacion" class="nav-item" data-page="capacitacion">
-                <i class="fas fa-user-plus"></i>
-                <span>Asignar Participantes</span>
-            </a>
-            <?php endif; ?>
+                    <?php if (tiene_permiso($rol_actual, 'capacitacion')): ?>
+                    <a href="#capacitacion" class="dropdown-item" data-page="capacitacion">Asignar Participantes</a>
+                    <?php endif; ?>
 
-            <?php if (tiene_permiso($rol_actual, 'certificados')): ?>
-            <a href="#certificados" class="nav-item" data-page="certificados">
-                <i class="fas fa-graduation-cap"></i>
-                <span>Capacitaciones y Certificados</span>
-            </a>
+                    <?php if (tiene_permiso($rol_actual, 'certificados')): ?>
+                    <a href="#certificados" class="dropdown-item" data-page="certificados">Capacitaciones y Certificados</a>
+                    <?php endif; ?>
+                </div>
+            </div>
             <?php endif; ?>
 
             <?php if (tiene_permiso($rol_actual, 'reportes')): ?>
@@ -377,7 +380,7 @@ $total_completados = $row_completados['total_completados'];
                     e.preventDefault();
                     const targetPage = $(this).data('page') || $(this).attr('href').substring(1);
 
-                    if (targetPage && targetPage !== 'reportes') {
+                    if (targetPage && targetPage !== 'reportes' && targetPage !== 'capacitaciones-menu') {
                         // Actualizar menú activo
                         $('.nav-item, .dropdown-item').removeClass('active');
                         $(this).addClass('active');
@@ -414,18 +417,19 @@ $total_completados = $row_completados['total_completados'];
                 if (targetPage === 'reportes') {
                     $('#dropdown-reportes').addClass('show');
                 }
+
+                // Abrir dropdown de capacitaciones si corresponde
+                if (targetPage === 'planeacion' || targetPage === 'capacitacion' || targetPage === 'certificados') {
+                    $('#dropdown-capacitaciones').addClass('show');
+                }
             });
 
-            // Toggle para el dropdown de reportes
+            // Toggle para los dropdowns
             $('.dropdown-toggle').click(function(e) {
                 e.preventDefault();
                 const dropdown = $(this).next('.dropdown-menu');
                 $('.dropdown-menu').not(dropdown).removeClass('show');
                 dropdown.toggleClass('show');
-
-                // Mostrar la página de reportes
-                $('.page-content').removeClass('active');
-                $('#reportes').addClass('active');
 
                 // Actualizar menú activo
                 $('.nav-item, .dropdown-item').removeClass('active');
