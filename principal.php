@@ -41,643 +41,103 @@ $total_completados = $row_completados['total_completados'];
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema de Capacitaciones</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
-        :root {
-            --primary-color: #3498db;
-            --primary-hover: #2980b9;
-            --secondary-color: #2980b9;
-            --sidebar-bg: #2c3e50;
-            --sidebar-hover: #34495e;
-            --text-light: #ecf0f1;
-            --card-bg: #ffffff;
-            --card-border: #e9ecef;
-            --card-hover: #f8f9fa;
-            --shadow-light: 0 2px 10px rgba(0, 0, 0, 0.08);
-            --shadow-medium: 0 4px 20px rgba(0, 0, 0, 0.12);
-            --shadow-heavy: 0 8px 30px rgba(0, 0, 0, 0.16);
-            --transition-base: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            --transition-fast: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
-        body {
-            display: flex;
-            min-height: 100vh;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            transition: var(--transition-base);
-        }
-        
-        .sidebar {
-            width: 250px;
-            background: linear-gradient(180deg, var(--sidebar-bg) 0%, #1a252f 100%);
-            color: var(--text-light);
-            transition: var(--transition-base);
-            box-shadow: var(--shadow-medium);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .sidebar::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
-            transition: left 0.5s;
-        }
-        
-        .sidebar:hover::before {
-            left: 100%;
-        }
-        
-        .sidebar-header {
-            padding: 25px 20px;
-            text-align: center;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-        }
-        
-        .sidebar-header h3 {
-            font-size: 1.6rem;
-            font-weight: 700;
-            margin-bottom: 8px;
-            background: linear-gradient(45deg, #fff, #bdc3c7);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        
-        .sidebar-menu {
-            padding: 15px 0;
-        }
-        
-        .menu-item, .nav-link {
-            padding: 15px 20px;
-            display: flex;
-            align-items: center;
-            cursor: pointer;
-            transition: var(--transition-fast);
-            color: var(--text-light);
-            text-decoration: none;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .menu-item::before, .nav-link::before {
-            content: '';
-            position: absolute;
-            left: -100%;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(52, 152, 219, 0.3), transparent);
-            transition: left 0.4s ease;
-        }
-        
-        .menu-item:hover, .nav-link:hover {
-            background: linear-gradient(90deg, var(--sidebar-hover), rgba(52, 152, 219, 0.1));
-            border-left: 4px solid var(--primary-color);
-            transform: translateX(5px);
-            box-shadow: inset 0 0 10px rgba(52, 152, 219, 0.2);
-        }
-        
-        .menu-item:hover::before, .nav-link:hover::before {
-            left: 100%;
-        }
-        
-        .menu-item i, .nav-link i {
-            margin-right: 12px;
-            font-size: 1.2rem;
-            width: 22px;
-            text-align: center;
-            transition: var(--transition-fast);
-        }
-        
-        .menu-item:hover i, .nav-link:hover i {
-            transform: scale(1.1) rotate(5deg);
-            color: var(--primary-color);
-        }
-        
-        .active {
-            background: linear-gradient(90deg, var(--sidebar-hover), rgba(52, 152, 219, 0.2));
-            border-left: 4px solid var(--primary-color);
-            box-shadow: inset 0 0 15px rgba(52, 152, 219, 0.3);
-        }
-        
-        .content {
-            flex: 1;
-            padding: 25px;
-            overflow-y: auto;
-        }
-        
-        .content-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
-            padding: 20px 0;
-            border-bottom: 2px solid transparent;
-            background: linear-gradient(90deg, transparent, rgba(52, 152, 219, 0.1), transparent);
-            border-radius: 8px;
-            transition: var(--transition-base);
-        }
-        
-        .content-header:hover {
-            background: linear-gradient(90deg, rgba(52, 152, 219, 0.05), rgba(52, 152, 219, 0.15), rgba(52, 152, 219, 0.05));
-            border-bottom-color: var(--primary-color);
-        }
-        
-        .content-header h2 {
-            color: #2c3e50;
-            font-weight: 700;
-            font-size: 1.8rem;
-            transition: var(--transition-fast);
-        }
-        
-        .content-header:hover h2 {
-            transform: translateX(5px);
-            color: var(--primary-color);
-        }
-        
-        .user-info {
-            display: flex;
-            align-items: center;
-            padding: 8px 12px;
-            border-radius: 25px;
-            transition: var(--transition-fast);
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(10px);
-        }
-        
-        .user-info:hover {
-            background: rgba(255, 255, 255, 0.95);
-            box-shadow: var(--shadow-light);
-            transform: translateY(-2px);
-        }
-        
-        .user-info img {
-            width: 42px;
-            height: 42px;
-            border-radius: 50%;
-            margin-right: 12px;
-            transition: var(--transition-fast);
-            border: 2px solid transparent;
-        }
-        
-        .user-info:hover img {
-            transform: scale(1.05);
-            border-color: var(--primary-color);
-        }
-        
-        .card-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 30px;
-            margin: 35px 0;
-            justify-content: center;
-        }
-        
-        .card {
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-            background: var(--card-bg);
-            border-radius: 12px;
-            box-shadow: var(--shadow-light);
-            padding: 25px;
-            text-decoration: none;
-            color: inherit;
-            transition: var(--transition-base);
-            position: relative;
-            overflow: hidden;
-            border: 1px solid rgba(52, 152, 219, 0.1);
-        }
-        
-        .card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 2px;
-            background: linear-gradient(90deg, var(--primary-color), #2ecc71, var(--primary-color));
-            transition: left 0.6s ease;
-        }
-        
-        .card:hover {
-            transform: translateY(-8px) scale(1.02);
-            box-shadow: var(--shadow-heavy);
-            border-color: var(--primary-color);
-        }
-        
-        .card:hover::before {
-            left: 0;
-        }
-        
-        .card-icon {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 20px;
-            font-size: 3rem;
-            color: var(--primary-color);
-            transition: var(--transition-fast);
-        }
-        
-        .card:hover .card-icon {
-            transform: scale(1.1) rotate(10deg);
-            filter: drop-shadow(0 4px 8px rgba(52, 152, 219, 0.3));
-        }
-        
-        .card h3 {
-            text-align: center;
-            margin-bottom: 18px;
-            font-weight: 600;
-            color: #2c3e50;
-            transition: var(--transition-fast);
-        }
-        
-        .card:hover h3 {
-            color: var(--primary-color);
-            transform: scale(1.05);
-        }
-        
-        .card p {
-            flex-grow: 1;
-            margin-bottom: 25px;
-            text-align: center;
-            line-height: 1.6;
-            color: #555;
-            transition: var(--transition-fast);
-        }
-        
-        .card .btn {
-            align-self: center;
-            display: inline-block;
-            padding: 12px 24px;
-            background: linear-gradient(45deg, var(--primary-color), var(--primary-hover));
-            color: white;
-            border-radius: 25px;
-            font-weight: 600;
-            text-align: center;
-            margin-top: auto;
-            transition: var(--transition-fast);
-            border: none;
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .card .btn::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            background: rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            transition: width 0.4s, height 0.4s, top 0.4s, left 0.4s;
-            transform: translate(-50%, -50%);
-        }
-        
-        .card .btn:hover {
-            background: linear-gradient(45deg, var(--primary-hover), #1abc9c);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(52, 152, 219, 0.4);
-        }
-        
-        .card .btn:hover::before {
-            width: 100%;
-            height: 100%;
-        }
-        
-        .dashboard {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 35px;
-            flex-wrap: wrap;
-            gap: 20px;
-        }
-        
-        .stat-card {
-            flex: 1;
-            min-width: 220px;
-            background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
-            border-radius: 15px;
-            box-shadow: var(--shadow-light);
-            padding: 25px;
-            text-align: center;
-            transition: var(--transition-base);
-            position: relative;
-            overflow: hidden;
-            cursor: pointer;
-        }
-        
-        .stat-card::after {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -50%;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%);
-            transform: scale(0);
-            transition: transform 0.6s ease;
-        }
-        
-        .stat-card:hover {
-            transform: translateY(-5px) rotate(1deg);
-            box-shadow: var(--shadow-heavy);
-        }
-        
-        .stat-card:hover::after {
-            transform: scale(1);
-        }
-        
-        .stat-card-empleados {
-            border-top: 4px solid #3498db;
-        }
-        
-        .stat-card-programados {
-            border-top: 4px solid #2ecc71;
-        }
-        
-        .stat-card-completados {
-            border-top: 4px solid #f39c12;
-        }
-        
-        .stat-number {
-            font-size: 2.5rem;
-            font-weight: 800;
-            margin: 15px 0;
-            color: #2c3e50;
-            transition: var(--transition-fast);
-        }
-        
-        .stat-card:hover .stat-number {
-            transform: scale(1.1);
-            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        
-        .stat-label {
-            font-size: 0.85rem;
-            color: #7f8c8d;
-            text-transform: uppercase;
-            letter-spacing: 1.2px;
-            font-weight: 600;
-        }
-        
-        .stat-icon {
-            font-size: 2rem;
-            margin-bottom: 18px;
-            transition: var(--transition-fast);
-        }
-        
-        .stat-card:hover .stat-icon {
-            transform: scale(1.2) rotate(15deg);
-        }
-        
-        .stat-card-empleados .stat-icon {
-            color: #3498db;
-        }
-        
-        .stat-card-programados .stat-icon {
-            color: #2ecc71;
-        }
-        
-        .stat-card-completados .stat-icon {
-            color: #f39c12;
-        }
-        
-        .submenu {
-            list-style: none;
-            padding-left: 20px;
-            display: none;
-            background: rgba(0, 0, 0, 0.1);
-            border-radius: 0 0 8px 8px;
-            margin: 5px 15px;
-            overflow: hidden;
-        }
-        
-        .submenu.show {
-            display: block;
-            animation: slideDown 0.3s ease;
-        }
-        
-        @keyframes slideDown {
-            from {
-                opacity: 0;
-                max-height: 0;
-            }
-            to {
-                opacity: 1;
-                max-height: 200px;
-            }
-        }
-        
-        .submenu li a {
-            padding: 10px 15px;
-            font-size: 0.9em;
-            display: block;
-            color: #bdc3c7;
-            transition: var(--transition-fast);
-            text-decoration: none;
-            border-radius: 4px;
-            margin: 2px 0;
-        }
-        
-        .submenu li a:hover {
-            color: #fff;
-            background: linear-gradient(90deg, rgba(52, 152, 219, 0.3), rgba(52, 152, 219, 0.1));
-            transform: translateX(5px);
-        }
-        
-        @media (max-width: 768px) {
-            body {
-                flex-direction: column;
-            }
-            
-            .sidebar {
-                width: 100%;
-                height: auto;
-            }
-            
-            .card-container {
-                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-                gap: 20px;
-            }
-            
-            .dashboard {
-                flex-direction: column;
-            }
-            
-            .stat-card {
-                width: 100%;
-            }
-        }
-
-        /* Animación de carga suave */
-        .page-content {
-            display: none;
-            animation: fadeIn 0.5s ease-in-out;
-        }
-        
-        .page-content.active {
-            display: block;
-        }
-        
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        .welcome-message {
-            text-align: center;
-            margin: 40px 0;
-            padding: 30px;
-            background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(248,249,250,0.9) 100%);
-            border-radius: 15px;
-            backdrop-filter: blur(10px);
-        }
-        
-        .welcome-message h1 {
-            font-size: 2.8rem;
-            background: linear-gradient(45deg, var(--primary-color), #2ecc71);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 15px;
-            font-weight: 800;
-        }
-        
-        .welcome-message p {
-            font-size: 1.15rem;
-            color: #555;
-            max-width: 800px;
-            margin: 0 auto;
-            line-height: 1.6;
-        }
-    </style>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <!-- Sidebar -->
-    <div class="sidebar">
-        <div class="sidebar-header">
-            <h3>Sistema de Capacitaciones</h3>
-            <p>Panel de Control</p>
+    <!-- Top Navigation -->
+    <nav class="top-navbar">
+        <div class="navbar-brand">
+            <img src="kwdaf.png" alt="Logo KWDAF">
         </div>
-        <div class="sidebar-menu">
-            <a href="#inicio" class="menu-item active" data-page="inicio">
+
+        <div class="navbar-menu">
+            <a href="#inicio" class="nav-item active" data-page="inicio">
                 <i class="fas fa-home"></i>
                 <span>Inicio</span>
             </a>
 
             <?php if (tiene_permiso($rol_actual, 'empleados')): ?>
-            <a href="#empleados" class="menu-item" data-page="empleados">
+            <a href="#empleados" class="nav-item" data-page="empleados">
                 <i class="fas fa-users"></i>
                 <span>Empleados</span>
             </a>
             <?php endif; ?>
 
             <?php if (tiene_permiso($rol_actual, 'cursos')): ?>
-            <a href="#cursos" class="menu-item" data-page="cursos">
+            <a href="#cursos" class="nav-item" data-page="cursos">
                 <i class="fas fa-user-graduate"></i>
                 <span>Cursos</span>
             </a>
             <?php endif; ?>
 
             <?php if (tiene_permiso($rol_actual, 'puestos')): ?>
-            <a href="#puestos" class="menu-item" data-page="puestos">
+            <a href="#puestos" class="nav-item" data-page="puestos">
                 <i class="fas fa-briefcase"></i>
                 <span>Puestos</span>
             </a>
             <?php endif; ?>
 
             <?php if (tiene_permiso($rol_actual, 'cursoxpuesto')): ?>
-            <a href="#cursoxpuesto" class="menu-item" data-page="cursoxpuesto">
+            <a href="#cursoxpuesto" class="nav-item" data-page="cursoxpuesto">
                 <i class="fas fa-clipboard-check"></i>
                 <span>Cursos Por Puesto</span>
             </a>
             <?php endif; ?>
 
             <?php if (tiene_permiso($rol_actual, 'planeacion')): ?>
-            <a href="#planeacion" class="menu-item" data-page="planeacion">
+            <a href="#planeacion" class="nav-item" data-page="planeacion">
                 <i class="fas fa-calendar-alt"></i>
                 <span>Programar Capacitación</span>
             </a>
             <?php endif; ?>
 
             <?php if (tiene_permiso($rol_actual, 'capacitacion')): ?>
-            <a href="#capacitacion" class="menu-item" data-page="capacitacion">
+            <a href="#capacitacion" class="nav-item" data-page="capacitacion">
                 <i class="fas fa-user-plus"></i>
                 <span>Asignar Participantes</span>
             </a>
             <?php endif; ?>
 
             <?php if (tiene_permiso($rol_actual, 'certificados')): ?>
-            <a href="#certificados" class="menu-item" data-page="certificados">
+            <a href="#certificados" class="nav-item" data-page="certificados">
                 <i class="fas fa-graduation-cap"></i>
                 <span>Capacitaciones y Certificados</span>
             </a>
             <?php endif; ?>
 
             <?php if (tiene_permiso($rol_actual, 'reportes')): ?>
-            <!-- Opción de Reportes en el menú lateral con submenú -->
-            <li class="nav-item">
-                <a href="#reportes" class="nav-link" data-page="reportes">
+            <!-- Dropdown de Reportes -->
+            <div class="nav-dropdown">
+                <a href="#reportes" class="nav-item dropdown-toggle" data-page="reportes">
                     <i class="fas fa-chart-bar"></i>
                     <span>Reportes</span>
-                    <i class="fas fa-angle-down ml-auto"></i>
+                    <i class="fas fa-angle-down"></i>
                 </a>
-                <ul class="submenu" id="submenu-reportes">
+                <div class="dropdown-menu" id="dropdown-reportes">
                     <?php if (es_administrador() || es_supervisor()): ?>
-                    <li><a href="#reportes-empleados" class="nav-link">Empleados</a></li>
-                    <li><a href="#reportes-cursos" class="nav-link">Cursos</a></li>
-                    <li><a href="#reportes-puestos" class="nav-link">Puestos</a></li>
-                    <li><a href="#reportes-cursos-puesto" class="nav-link">Cursos Por Puesto</a></li>
-                    <li><a href="#reportes-cursos-programados" class="nav-link">Cursos Programados</a></li>
-                    <li><a href="#reportes-capacitaciones" class="nav-link">Capacitaciones</a></li>
-                    <li><a href="#reportes-proximas-capacitaciones" class="nav-link">Próximas Capacitaciones</a></li>
-                    <li><a href="#reportes-cursos-concluidos" class="nav-link">Cursos Concluidos</a></li>
-                    <li><a href="#reportes-cursos-faltantes" class="nav-link">Cursos Faltantes</a></li>
-                    <li><a href="#reportes-asistencias" class="nav-link">Asistencias</a></li>
-                    <li><a href="#reportes-faltas" class="nav-link">Faltas</a></li>
+                    <a href="#reportes-empleados" class="dropdown-item">Empleados</a>
+                    <a href="#reportes-cursos" class="dropdown-item">Cursos</a>
+                    <a href="#reportes-puestos" class="dropdown-item">Puestos</a>
+                    <a href="#reportes-cursos-puesto" class="dropdown-item">Cursos Por Puesto</a>
+                    <a href="#reportes-cursos-programados" class="dropdown-item">Cursos Programados</a>
+                    <a href="#reportes-capacitaciones" class="dropdown-item">Capacitaciones</a>
+                    <a href="#reportes-proximas-capacitaciones" class="dropdown-item">Próximas Capacitaciones</a>
+                    <a href="#reportes-cursos-concluidos" class="dropdown-item">Cursos Concluidos</a>
+                    <a href="#reportes-cursos-faltantes" class="dropdown-item">Cursos Faltantes</a>
+                    <a href="#reportes-asistencias" class="dropdown-item">Asistencias</a>
+                    <a href="#reportes-faltas" class="dropdown-item">Faltas</a>
                     <?php endif; ?>
 
                     <?php if (es_gerente()): ?>
-                    <li><a href="#reportes-cursos-concluidos" class="nav-link">Cursos Concluidos</a></li>
-                    <li><a href="#reportes-cursos-faltantes" class="nav-link">Cursos Faltantes</a></li>
+                    <a href="#reportes-cursos-concluidos" class="dropdown-item">Cursos Concluidos</a>
+                    <a href="#reportes-cursos-faltantes" class="dropdown-item">Cursos Faltantes</a>
                     <?php endif; ?>
-                </ul>
-            </li>
+                </div>
+            </div>
             <?php endif; ?>
-
-            <a href="logout.php" class="menu-item">
-                <i class="fas fa-sign-out-alt"></i>
-                <span>Cerrar Sesión</span>
-            </a>
         </div>
-    </div>
 
-    <!-- Main Content -->
-    <div class="content">
-        <div class="content-header">
-            <h2>Panel de Control</h2>
+        <div class="navbar-user">
             <div class="user-info">
                 <i class="fas fa-user-circle"></i>
                 <span>
@@ -697,6 +157,17 @@ $total_completados = $row_completados['total_completados'];
                     </small>
                 </span>
             </div>
+            <a href="logout.php" class="nav-item logout-btn">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Cerrar Sesión</span>
+            </a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="content-header">
+            <h2></h2>
         </div>
 
         <!-- Página de Inicio -->
@@ -901,57 +372,71 @@ $total_completados = $row_completados['total_completados'];
     <script>
         $(document).ready(function() {
             // Manejo de navegación general
-            $('.menu-item, .nav-link').click(function(e) {
-                if($(this).attr('href') !== 'logout.php') {
+            $('.nav-item:not(.dropdown-toggle), .dropdown-item').click(function(e) {
+                if($(this).attr('href') !== 'logout.php' && !$(this).hasClass('dropdown-toggle')) {
                     e.preventDefault();
-                    const targetPage = $(this).data('page');
-                    
-                    // Si no es el enlace de reportes (que tiene submenú)
+                    const targetPage = $(this).data('page') || $(this).attr('href').substring(1);
+
                     if (targetPage && targetPage !== 'reportes') {
                         // Actualizar menú activo
-                        $('.menu-item, .nav-link').removeClass('active');
+                        $('.nav-item, .dropdown-item').removeClass('active');
                         $(this).addClass('active');
-                        
+
                         // Mostrar página correspondiente
                         $('.page-content').removeClass('active');
                         $('#' + targetPage).addClass('active');
+
+                        // Cerrar dropdowns
+                        $('.dropdown-menu').removeClass('show');
                     }
                 }
             });
-            
+
             // Manejo de tarjetas en la página de inicio
             $('.card').click(function(e) {
-    const targetPage = $(this).data('target');
-    
-    // Si no tiene un data-target, significa que es un enlace externo
-    if (!targetPage) {
-        return; // Permite que el enlace externo funcione normalmente
-    }
-    
-    // Solo previene el comportamiento predeterminado si es una navegación interna
-    e.preventDefault();
-    
-    // El resto del código para la navegación interna...
-    $('.menu-item, .nav-link').removeClass('active');
-    $('.menu-item[data-page="' + targetPage + '"], .nav-link[data-page="' + targetPage + '"]').addClass('active');
-    
-    $('.page-content').removeClass('active');
-    $('#' + targetPage).addClass('active');
-    
-    if (targetPage === 'reportes') {
-        $('#submenu-reportes').addClass('show');
-    }
-});
-            
-            // Toggle para el submenú de reportes
-            $('a[href="#reportes"]').click(function(e) {
+                const targetPage = $(this).data('target');
+
+                // Si no tiene un data-target, significa que es un enlace externo
+                if (!targetPage) {
+                    return; // Permite que el enlace externo funcione normalmente
+                }
+
+                // Solo previene el comportamiento predeterminado si es una navegación interna
                 e.preventDefault();
-                $('#submenu-reportes').toggleClass('show');
-                
-                // Si se hace clic en el enlace principal de reportes, también mostramos
-                // la página de reportes (podría ser una página de índice de reportes)
+
+                // El resto del código para la navegación interna...
+                $('.nav-item, .dropdown-item').removeClass('active');
+                $('.nav-item[data-page="' + targetPage + '"], .dropdown-item[data-page="' + targetPage + '"]').addClass('active');
+
+                $('.page-content').removeClass('active');
+                $('#' + targetPage).addClass('active');
+
+                if (targetPage === 'reportes') {
+                    $('#dropdown-reportes').addClass('show');
+                }
+            });
+
+            // Toggle para el dropdown de reportes
+            $('.dropdown-toggle').click(function(e) {
+                e.preventDefault();
+                const dropdown = $(this).next('.dropdown-menu');
+                $('.dropdown-menu').not(dropdown).removeClass('show');
+                dropdown.toggleClass('show');
+
+                // Mostrar la página de reportes
                 $('.page-content').removeClass('active');
                 $('#reportes').addClass('active');
+
+                // Actualizar menú activo
+                $('.nav-item, .dropdown-item').removeClass('active');
+                $(this).addClass('active');
+            });
+
+            // Cerrar dropdowns cuando se hace clic fuera
+            $(document).click(function(e) {
+                if (!$(e.target).closest('.nav-dropdown').length) {
+                    $('.dropdown-menu').removeClass('show');
+                }
             });
             
             // Mapeo de rutas hash a archivos PHP (incluye los 4 nuevos reportes)
@@ -974,23 +459,26 @@ $total_completados = $row_completados['total_completados'];
                 const iframe = $('#reportes-iframe');
                 if (reportesFiles[reporteHash]) {
                     iframe.attr('src', reportesFiles[reporteHash]);
-                    
+
                     // Mostrar el contenedor de reportes
                     $('.page-content').removeClass('active');
                     $('#reportes').addClass('active');
-                    
-                    // También mantener el submenú visible
-                    $('#submenu-reportes').addClass('show');
+
+                    // Mantener el dropdown visible
+                    $('#dropdown-reportes').addClass('show');
+
+                    // Actualizar menú activo
+                    $('.nav-item, .dropdown-item').removeClass('active');
+                    $('.dropdown-toggle').addClass('active');
+                    $(`a[href="${reporteHash}"]`).addClass('active');
                 }
             }
-            
-            // Agregar listeners para cada enlace del submenú
+
+            // Agregar listeners para cada enlace del dropdown
             $.each(reportesFiles, function(reporteHash, phpFile) {
                 $(`a[href="${reporteHash}"]`).click(function(e) {
                     e.preventDefault();
                     cargarReporte(reporteHash);
-                    
-                    // Actualizar el hash de la URL sin recargar la página
                     window.location.hash = reporteHash;
                 });
             });
@@ -1032,59 +520,77 @@ $total_completados = $row_completados['total_completados'];
             
             // Verificar el hash actual al cargar la página
             const currentHash = window.location.hash;
-            
-            // Iniciar las secciones según el hash actual
+
             if (currentHash === '#empleados') {
-                $('.menu-item[data-page="empleados"]').click();
+                $('.nav-item[data-page="empleados"]').addClass('active');
+                $('.page-content').removeClass('active');
+                $('#empleados').addClass('active');
                 cargarUsuarios();
             } else if (currentHash === '#cursos') {
-                $('.menu-item[data-page="cursos"]').click();
+                $('.nav-item[data-page="cursos"]').addClass('active');
+                $('.page-content').removeClass('active');
+                $('#cursos').addClass('active');
                 cargarCursos();
             } else if (currentHash === '#puestos') {
-                $('.menu-item[data-page="puestos"]').click();
+                $('.nav-item[data-page="puestos"]').addClass('active');
+                $('.page-content').removeClass('active');
+                $('#puestos').addClass('active');
                 cargarPuestos();
             } else if (currentHash === '#cursoxpuesto') {
-                $('.menu-item[data-page="cursoxpuesto"]').click();
+                $('.nav-item[data-page="cursoxpuesto"]').addClass('active');
+                $('.page-content').removeClass('active');
+                $('#cursoxpuesto').addClass('active');
                 cargarCursoxPuesto();
             } else if (currentHash === '#planeacion') {
-                $('.menu-item[data-page="planeacion"]').click();
+                $('.nav-item[data-page="planeacion"]').addClass('active');
+                $('.page-content').removeClass('active');
+                $('#planeacion').addClass('active');
                 cargarPlaneacion();
             } else if (currentHash === '#capacitacion') {
-                $('.menu-item[data-page="capacitacion"]').click();
+                $('.nav-item[data-page="capacitacion"]').addClass('active');
+                $('.page-content').removeClass('active');
+                $('#capacitacion').addClass('active');
                 cargarCapacitacion();
             } else if (currentHash === '#certificados') {
-                $('.menu-item[data-page="certificados"]').click();
-                cargarcertificados();    
-            }              else if (reportesFiles[currentHash]) {
+                $('.nav-item[data-page="certificados"]').addClass('active');
+                $('.page-content').removeClass('active');
+                $('#certificados').addClass('active');
+                cargarcertificados();
+            } else if (reportesFiles[currentHash]) {
                 cargarReporte(currentHash);
+            } else {
+                // Por defecto mostrar inicio
+                $('.nav-item[data-page="inicio"]').addClass('active');
+                $('.page-content').removeClass('active');
+                $('#inicio').addClass('active');
             }
-            
+
             // Escuchar cambios en el hash de la URL
             $(window).on('hashchange', function() {
                 const newHash = window.location.hash;
-                
+
                 if (newHash === '#empleados') {
-                    $('.menu-item[data-page="empleados"]').click();
+                    $('.nav-item[data-page="empleados"]').click();
                     cargarUsuarios();
                 } else if (newHash === '#cursos') {
-                    $('.menu-item[data-page="cursos"]').click();
+                    $('.nav-item[data-page="cursos"]').click();
                     cargarCursos();
                 } else if (newHash === '#puestos') {
-                    $('.menu-item[data-page="puestos"]').click();
+                    $('.nav-item[data-page="puestos"]').click();
                     cargarPuestos();
                 } else if (newHash === '#cursoxpuesto') {
-                    $('.menu-item[data-page="cursoxpuesto"]').click();
+                    $('.nav-item[data-page="cursoxpuesto"]').click();
                     cargarCursoxPuesto();
                 } else if (newHash === '#planeacion') {
-                    $('.menu-item[data-page="planeacion"]').click();
+                    $('.nav-item[data-page="planeacion"]').click();
                     cargarPlaneacion();
                 } else if (newHash === '#capacitacion') {
-                    $('.menu-item[data-page="capacitacion"]').click();
+                    $('.nav-item[data-page="capacitacion"]').click();
                     cargarCapacitacion();
                 } else if (newHash === '#certificados') {
-                    $('.menu-item[data-page="certificados"]').click();
-                    cargarcertificados();    
-                }  else if (reportesFiles[newHash]) {
+                    $('.nav-item[data-page="certificados"]').click();
+                    cargarcertificados();
+                } else if (reportesFiles[newHash]) {
                     cargarReporte(newHash);
                 }
             });
