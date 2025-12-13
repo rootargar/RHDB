@@ -131,7 +131,28 @@ $total_completados = $row_completados['total_completados'];
                     <a href="#reportes-faltas" class="dropdown-item">Faltas</a>
                     <?php endif; ?>
 
+                    <?php if (es_instructor()): ?>
+                    <a href="#reportes-empleados" class="dropdown-item">Empleados</a>
+                    <a href="#reportes-cursos" class="dropdown-item">Cursos</a>
+                    <a href="#reportes-puestos" class="dropdown-item">Puestos</a>
+                    <a href="#reportes-cursos-puesto" class="dropdown-item">Cursos Por Puesto</a>
+                    <a href="#reportes-cursos-programados" class="dropdown-item">Cursos Programados</a>
+                    <a href="#reportes-capacitaciones" class="dropdown-item">Capacitaciones</a>
+                    <a href="#reportes-proximas-capacitaciones" class="dropdown-item">Próximas Capacitaciones</a>
+                    <a href="#reportes-cursos-concluidos" class="dropdown-item">Cursos Concluidos</a>
+                    <a href="#reportes-cursos-faltantes" class="dropdown-item">Cursos Faltantes</a>
+                    <a href="#reportes-asistencias" class="dropdown-item">Asistencias</a>
+                    <a href="#reportes-faltas" class="dropdown-item">Faltas</a>
+                    <?php endif; ?>
+
                     <?php if (es_gerente()): ?>
+                    <a href="#reportes-cursos-concluidos" class="dropdown-item">Cursos Concluidos</a>
+                    <a href="#reportes-cursos-faltantes" class="dropdown-item">Cursos Faltantes</a>
+                    <?php endif; ?>
+
+                    <?php if (es_empleado()): ?>
+                    <a href="#reportes-cursos-programados" class="dropdown-item">Cursos Programados</a>
+                    <a href="#reportes-proximas-capacitaciones" class="dropdown-item">Próximas Capacitaciones</a>
                     <a href="#reportes-cursos-concluidos" class="dropdown-item">Cursos Concluidos</a>
                     <a href="#reportes-cursos-faltantes" class="dropdown-item">Cursos Faltantes</a>
                     <?php endif; ?>

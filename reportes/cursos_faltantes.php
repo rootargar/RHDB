@@ -3,8 +3,19 @@
 // Configuración de la conexión a la base de datos SQL Server
 include("conexion2.php");
 
+// Incluir sistema de autenticación para verificar el rol
+require_once(__DIR__ . '/../auth_check.php');
+
 // Variable para almacenar el ID del empleado seleccionado (si se ha filtrado)
 $empleado_seleccionado = isset($_POST['id_empleado']) ? $_POST['id_empleado'] : '';
+
+// Si el usuario es Empleado, automáticamente filtrar por su usuario logueado
+if (es_empleado()) {
+    $clave_usuario = get_clave_usuario();
+    if ($clave_usuario) {
+        $empleado_seleccionado = $clave_usuario;
+    }
+}
 
 // Función para exportar a Excel
 if (isset($_POST['exportar_excel'])) {

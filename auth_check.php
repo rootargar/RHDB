@@ -249,4 +249,49 @@ function puede_ver_registro($clave_usuario) {
 
     return false;
 }
+
+/**
+ * Obtiene la clave del usuario logueado
+ *
+ * @return string|null La clave del usuario o null si no está definida
+ */
+function get_clave_usuario() {
+    return isset($_SESSION['clave_usuario']) ? $_SESSION['clave_usuario'] : null;
+}
+
+/**
+ * Obtiene el ID del puesto del usuario logueado
+ *
+ * @return int|null El ID del puesto o null si no está definido
+ */
+function get_id_puesto_usuario() {
+    return isset($_SESSION['id_puesto']) ? $_SESSION['id_puesto'] : null;
+}
+
+/**
+ * Obtiene el departamento del usuario logueado
+ * Requiere conexión a la base de datos
+ *
+ * @param resource $conn Conexión a la base de datos
+ * @return string|null El departamento del usuario o null si no se encuentra
+ */
+function get_departamento_usuario($conn) {
+    $id_puesto = get_id_puesto_usuario();
+
+    if (!$id_puesto) {
+        return null;
+    }
+
+    $sql = "SELECT depto FROM puestos WHERE Id = ?";
+    $params = array($id_puesto);
+    $stmt = sqlsrv_query($conn, $sql, $params);
+
+    if ($stmt !== false && sqlsrv_has_rows($stmt)) {
+        $row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC);
+        sqlsrv_free_stmt($stmt);
+        return $row['depto'];
+    }
+
+    return null;
+}
 ?>

@@ -92,9 +92,9 @@ $permisos = [
     'reportes' => [
         ROL_ADMINISTRADOR => true,  // Todos los reportes
         ROL_SUPERVISOR => true,     // Todos los reportes
-        ROL_INSTRUCTOR => false,
+        ROL_INSTRUCTOR => true,     // Todos los reportes
         ROL_GERENTE => true,        // Reportes generales
-        ROL_EMPLEADO => false
+        ROL_EMPLEADO => true        // Reportes de su área
     ],
 
     // Módulo de actividades
