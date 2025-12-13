@@ -3,6 +3,21 @@
 // Configuración de la conexión a la base de datos SQL Server
 include("conexion2.php");
 
+// Incluir sistema de autenticación para verificar el rol
+require_once(__DIR__ . '/../auth_check.php');
+
+// Variables para filtrado
+$filtro_empleado = '';
+$es_empleado_rol = es_empleado();
+
+// Si el usuario es Empleado, filtrar por su usuario logueado
+if ($es_empleado_rol) {
+    $clave_usuario = get_clave_usuario();
+    if ($clave_usuario) {
+        $filtro_empleado = " AND cap.IdEmp = '$clave_usuario'";
+    }
+}
+
 // Establecer fecha predeterminada (hoy) - CORREGIDO: usar formato ISO
 $fecha_seleccionada = isset($_POST['fecha_seleccion']) ? $_POST['fecha_seleccion'] : date('Y-m-d');
 
@@ -78,7 +93,8 @@ if (isset($_POST['exportar_excel'])) {
             LEFT JOIN puestos p ON u.idPuesto = p.Id
             LEFT JOIN plancursos pc ON cap.IdPlan = pc.IdPlan
             LEFT JOIN cursos curso ON pc.IdCursoBase = curso.Id
-            WHERE cap.FechaIni >= CONVERT(datetime, ?, 120)
+            WHERE cap.FechaIni >= CONVERT(datetime, ?, 120)" .
+            $filtro_empleado . "
             ORDER BY cap.FechaIni ASC";
             
     $params = array($fecha_sql);
@@ -252,7 +268,8 @@ if (isset($_POST['exportar_excel'])) {
                                     LEFT JOIN puestos p ON u.idPuesto = p.Id
                                     LEFT JOIN plancursos pc ON cap.IdPlan = pc.IdPlan
                                     LEFT JOIN cursos curso ON pc.IdCursoBase = curso.Id
-                                    WHERE cap.FechaIni >= CONVERT(datetime, ?, 120)
+                                    WHERE cap.FechaIni >= CONVERT(datetime, ?, 120)" .
+                                    $filtro_empleado . "
                                     ORDER BY cap.FechaIni ASC";
                                     
                             $params = array($fecha_sql);

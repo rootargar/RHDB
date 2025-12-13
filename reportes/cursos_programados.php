@@ -3,6 +3,24 @@
 // Configuración de la conexión a la base de datos SQL Server
 include("conexion2.php");
 
+// Incluir sistema de autenticación para verificar el rol
+require_once(__DIR__ . '/../auth_check.php');
+
+// Variables para filtrado
+$filtro_empleado = '';
+$join_empleado = '';
+$es_empleado_rol = es_empleado();
+
+// Si el usuario es Empleado, filtrar por su usuario logueado
+if ($es_empleado_rol) {
+    $clave_usuario = get_clave_usuario();
+    if ($clave_usuario) {
+        // Agregar JOIN con capacitaciones para filtrar por empleado
+        $join_empleado = " INNER JOIN capacitaciones cap ON p.IdPlan = cap.IdPlan";
+        $filtro_empleado = " WHERE cap.IdEmp = '$clave_usuario'";
+    }
+}
+
 // Función para exportar a Excel
 if (isset($_POST['exportar_excel'])) {
     // Establecer encabezados para descarga de Excel
@@ -48,11 +66,13 @@ if (isset($_POST['exportar_excel'])) {
             <tbody>';
     
     // Obtener los datos con JOIN entre plancursos y cursos
-    $sql = "SELECT p.IdPlan, c.NombreCurso, p.IdCursoBase AS IdCurso, c.Area, 
-            p.FechaIni, p.FechaFin, p.FechaCurso, p.Lugar, p.Horario, 
-            p.Instructor, p.Proveedor, p.Costo, p.NumParticipantes, p.Factura, p.Estado 
+    $sql = "SELECT p.IdPlan, c.NombreCurso, p.IdCursoBase AS IdCurso, c.Area,
+            p.FechaIni, p.FechaFin, p.FechaCurso, p.Lugar, p.Horario,
+            p.Instructor, p.Proveedor, p.Costo, p.NumParticipantes, p.Factura, p.Estado
             FROM plancursos p
-            INNER JOIN cursos c ON p.IdCursoBase = c.Id
+            INNER JOIN cursos c ON p.IdCursoBase = c.Id" .
+            $join_empleado .
+            $filtro_empleado . "
             ORDER BY p.FechaIni DESC";
     $stmt = sqlsrv_query($conn, $sql);
     
@@ -186,11 +206,13 @@ if (isset($_POST['exportar_excel'])) {
                         <tbody>
                             <?php
                             // Obtener los datos con JOIN entre plancursos y cursos
-                            $sql = "SELECT p.IdPlan, c.NombreCurso, p.IdCursoBase AS IdCurso, c.Area, 
-                                    p.FechaIni, p.FechaFin, p.FechaCurso, p.Lugar, p.Horario, 
-                                    p.Instructor, p.Proveedor, p.Costo, p.NumParticipantes, p.Factura, p.Estado 
+                            $sql = "SELECT p.IdPlan, c.NombreCurso, p.IdCursoBase AS IdCurso, c.Area,
+                                    p.FechaIni, p.FechaFin, p.FechaCurso, p.Lugar, p.Horario,
+                                    p.Instructor, p.Proveedor, p.Costo, p.NumParticipantes, p.Factura, p.Estado
                                     FROM plancursos p
-                                    INNER JOIN cursos c ON p.IdCursoBase = c.Id
+                                    INNER JOIN cursos c ON p.IdCursoBase = c.Id" .
+                                    $join_empleado .
+                                    $filtro_empleado . "
                                     ORDER BY p.FechaIni DESC";
                             $stmt = sqlsrv_query($conn, $sql);
                             
