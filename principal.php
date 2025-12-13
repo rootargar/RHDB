@@ -117,7 +117,7 @@ $total_completados = $row_completados['total_completados'];
                     <i class="fas fa-angle-down"></i>
                 </a>
                 <div class="dropdown-menu" id="dropdown-reportes">
-                    <?php if (es_administrador() || es_supervisor()): ?>
+                    <?php if (es_administrador() || es_supervisor() || es_instructor()): ?>
                     <a href="#reportes-empleados" class="dropdown-item">Empleados</a>
                     <a href="#reportes-cursos" class="dropdown-item">Cursos</a>
                     <a href="#reportes-puestos" class="dropdown-item">Puestos</a>
@@ -132,6 +132,13 @@ $total_completados = $row_completados['total_completados'];
                     <?php endif; ?>
 
                     <?php if (es_gerente()): ?>
+                    <a href="#reportes-cursos-concluidos" class="dropdown-item">Cursos Concluidos</a>
+                    <a href="#reportes-cursos-faltantes" class="dropdown-item">Cursos Faltantes</a>
+                    <?php endif; ?>
+
+                    <?php if (es_empleado()): ?>
+                    <a href="#reportes-cursos-programados" class="dropdown-item">Cursos Programados</a>
+                    <a href="#reportes-proximas-capacitaciones" class="dropdown-item">Próximas Capacitaciones</a>
                     <a href="#reportes-cursos-concluidos" class="dropdown-item">Cursos Concluidos</a>
                     <a href="#reportes-cursos-faltantes" class="dropdown-item">Cursos Faltantes</a>
                     <?php endif; ?>

@@ -92,9 +92,9 @@ $permisos = [
     'reportes' => [
         ROL_ADMINISTRADOR => true,  // Todos los reportes
         ROL_SUPERVISOR => true,     // Todos los reportes
-        ROL_INSTRUCTOR => false,
+        ROL_INSTRUCTOR => true,     // Todos los reportes
         ROL_GERENTE => true,        // Reportes generales
-        ROL_EMPLEADO => false
+        ROL_EMPLEADO => true        // Reportes filtrados por usuario
     ],
 
     // Módulo de actividades
@@ -131,8 +131,19 @@ $permisos_acciones = [
         'ver_propios' => [ROL_EMPLEADO]
     ],
     'reportes' => [
-        'generales' => [ROL_ADMINISTRADOR, ROL_SUPERVISOR, ROL_GERENTE],
-        'detallados' => [ROL_ADMINISTRADOR, ROL_SUPERVISOR]
+        'generales' => [ROL_ADMINISTRADOR, ROL_SUPERVISOR, ROL_GERENTE, ROL_INSTRUCTOR],
+        'detallados' => [ROL_ADMINISTRADOR, ROL_SUPERVISOR, ROL_INSTRUCTOR],
+        'empleados' => [ROL_ADMINISTRADOR, ROL_SUPERVISOR, ROL_INSTRUCTOR],
+        'cursos' => [ROL_ADMINISTRADOR, ROL_SUPERVISOR, ROL_INSTRUCTOR],
+        'puestos' => [ROL_ADMINISTRADOR, ROL_SUPERVISOR, ROL_INSTRUCTOR],
+        'cursos_puesto' => [ROL_ADMINISTRADOR, ROL_SUPERVISOR, ROL_INSTRUCTOR],
+        'cursos_programados' => [ROL_ADMINISTRADOR, ROL_SUPERVISOR, ROL_INSTRUCTOR, ROL_EMPLEADO],
+        'capacitaciones' => [ROL_ADMINISTRADOR, ROL_SUPERVISOR, ROL_INSTRUCTOR],
+        'proximas_capacitaciones' => [ROL_ADMINISTRADOR, ROL_SUPERVISOR, ROL_INSTRUCTOR, ROL_EMPLEADO],
+        'cursos_concluidos' => [ROL_ADMINISTRADOR, ROL_SUPERVISOR, ROL_GERENTE, ROL_INSTRUCTOR, ROL_EMPLEADO],
+        'cursos_faltantes' => [ROL_ADMINISTRADOR, ROL_SUPERVISOR, ROL_GERENTE, ROL_INSTRUCTOR, ROL_EMPLEADO],
+        'asistencias' => [ROL_ADMINISTRADOR, ROL_SUPERVISOR, ROL_INSTRUCTOR],
+        'faltas' => [ROL_ADMINISTRADOR, ROL_SUPERVISOR, ROL_INSTRUCTOR]
     ]
 ];
 
@@ -181,9 +192,9 @@ function get_descripcion_rol($rol) {
     $descripciones = [
         ROL_ADMINISTRADOR => 'Acceso total al sistema',
         ROL_SUPERVISOR => 'Acceso a reportes y gestión de usuarios limitada',
-        ROL_INSTRUCTOR => 'Acceso a cursos y captura de capacitaciones',
+        ROL_INSTRUCTOR => 'Acceso a cursos, capacitaciones y todos los reportes',
         ROL_GERENTE => 'Acceso a reportes generales',
-        ROL_EMPLEADO => 'Acceso solo a sus propias capacitaciones'
+        ROL_EMPLEADO => 'Acceso a capacitaciones y reportes filtrados por usuario'
     ];
 
     return isset($descripciones[$rol]) ? $descripciones[$rol] : 'Sin descripción';
