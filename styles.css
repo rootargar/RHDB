@@ -7,13 +7,13 @@
 }
 
 :root {
-    /* Colores azul claro y azul metálico */
-    --primary-color: #5F7D8E;          /* Azul metálico principal */
-    --primary-hover: #4A6572;          /* Azul metálico oscuro */
-    --secondary-color: #87CEEB;        /* Azul claro */
-    --secondary-hover: #B0D4E3;        /* Azul claro hover */
-    --navbar-bg: linear-gradient(135deg, #6C8EA8 0%, #87CEEB 100%);
-    --navbar-shadow: 0 4px 12px rgba(95, 125, 142, 0.3);
+    /* Colores azul #027be3 */
+    --primary-color: #027be3;          /* Azul principal */
+    --primary-hover: #0261b8;          /* Azul hover oscuro */
+    --secondary-color: #4da6ff;        /* Azul claro */
+    --secondary-hover: #80bfff;        /* Azul claro hover */
+    --navbar-bg: linear-gradient(135deg, #027be3 0%, #4da6ff 100%);
+    --navbar-shadow: 0 4px 12px rgba(2, 123, 227, 0.3);
     --text-light: #ecf0f1;
     --text-dark: #2c3e50;
     --card-bg: #ffffff;
@@ -75,17 +75,17 @@ body {
 .navbar-menu {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 4px;
     flex: 1;
     justify-content: center;
     position: relative;
 }
 
 .nav-item {
-    padding: 12px 18px;
+    padding: 10px 12px;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
     cursor: pointer;
     transition: var(--transition-fast);
     color: var(--text-light);
@@ -94,6 +94,7 @@ body {
     border-radius: 8px;
     font-weight: 500;
     white-space: nowrap;
+    font-size: 0.9rem;
 }
 
 .nav-item::before {
@@ -159,14 +160,14 @@ body {
     left: 0;
     background: linear-gradient(135deg, #ffffff 0%, #f0f8ff 100%);
     min-width: 240px;
-    box-shadow: 0 8px 24px rgba(95, 125, 142, 0.25);
+    box-shadow: 0 8px 24px rgba(2, 123, 227, 0.25);
     border-radius: 8px;
     margin-top: 8px;
     opacity: 0;
     visibility: hidden;
     transform: translateY(-10px);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    border: 1px solid rgba(95, 125, 142, 0.2);
+    border: 1px solid rgba(2, 123, 227, 0.2);
     overflow: hidden;
 }
 
@@ -188,14 +189,14 @@ body {
 }
 
 .dropdown-item:hover {
-    background: linear-gradient(90deg, rgba(95, 125, 142, 0.1), rgba(135, 206, 235, 0.15));
+    background: linear-gradient(90deg, rgba(2, 123, 227, 0.1), rgba(77, 166, 255, 0.15));
     border-left-color: var(--primary-color);
     color: var(--primary-color);
     transform: translateX(5px);
 }
 
 .dropdown-item.active {
-    background: rgba(95, 125, 142, 0.15);
+    background: rgba(2, 123, 227, 0.15);
     border-left-color: var(--primary-color);
     font-weight: 600;
 }
@@ -290,7 +291,7 @@ body {
     border-radius: 16px;
     backdrop-filter: blur(10px);
     box-shadow: var(--shadow-medium);
-    border: 1px solid rgba(95, 125, 142, 0.1);
+    border: 1px solid rgba(2, 123, 227, 0.1);
 }
 
 .welcome-message h1 {
@@ -357,15 +358,15 @@ body {
 }
 
 .stat-card-empleados {
-    border-top-color: #5F7D8E;
+    border-top-color: #027be3;
 }
 
 .stat-card-programados {
-    border-top-color: #87CEEB;
+    border-top-color: #4da6ff;
 }
 
 .stat-card-completados {
-    border-top-color: #6C8EA8;
+    border-top-color: #0261b8;
 }
 
 .stat-icon {
@@ -379,15 +380,15 @@ body {
 }
 
 .stat-card-empleados .stat-icon {
-    color: #5F7D8E;
+    color: #027be3;
 }
 
 .stat-card-programados .stat-icon {
-    color: #87CEEB;
+    color: #4da6ff;
 }
 
 .stat-card-completados .stat-icon {
-    color: #6C8EA8;
+    color: #0261b8;
 }
 
 .stat-number {
@@ -432,7 +433,7 @@ body {
     transition: var(--transition-base);
     position: relative;
     overflow: hidden;
-    border: 2px solid rgba(95, 125, 142, 0.1);
+    border: 2px solid rgba(2, 123, 227, 0.1);
 }
 
 .card::before {
@@ -467,7 +468,7 @@ body {
 
 .card:hover .card-icon {
     transform: scale(1.15) rotate(8deg);
-    filter: drop-shadow(0 6px 12px rgba(95, 125, 142, 0.4));
+    filter: drop-shadow(0 6px 12px rgba(2, 123, 227, 0.4));
 }
 
 .card h3 {
@@ -508,7 +509,7 @@ body {
     cursor: pointer;
     position: relative;
     overflow: hidden;
-    box-shadow: 0 4px 15px rgba(95, 125, 142, 0.3);
+    box-shadow: 0 4px 15px rgba(2, 123, 227, 0.3);
 }
 
 .card .btn::before {
@@ -525,9 +526,9 @@ body {
 }
 
 .card .btn:hover {
-    background: linear-gradient(45deg, var(--primary-hover), #5F7D8E);
+    background: linear-gradient(45deg, var(--primary-hover), var(--primary-color));
     transform: translateY(-3px);
-    box-shadow: 0 8px 20px rgba(95, 125, 142, 0.5);
+    box-shadow: 0 8px 20px rgba(2, 123, 227, 0.5);
 }
 
 .card .btn:hover::before {
