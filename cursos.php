@@ -105,8 +105,14 @@ if($stmt === false) {
             <div class="row mb-3">
                 <div class="col-md-6">
                     <label for="area" class="form-label">Área</label>
-                    <input type="text" class="form-control" id="area" name="area" required 
-                           value="<?php echo $cursoEditar ? $cursoEditar['Area'] : ''; ?>">
+                    <select class="form-select" id="area" name="area" required>
+                        <option value="">Seleccione un área</option>
+                        <option value="Servicio" <?php echo ($cursoEditar && $cursoEditar['Area'] == 'Servicio') ? 'selected' : ''; ?>>Servicio</option>
+                        <option value="Unidades" <?php echo ($cursoEditar && $cursoEditar['Area'] == 'Unidades') ? 'selected' : ''; ?>>Unidades</option>
+                        <option value="Refacciones" <?php echo ($cursoEditar && $cursoEditar['Area'] == 'Refacciones') ? 'selected' : ''; ?>>Refacciones</option>
+                        <option value="Administración" <?php echo ($cursoEditar && $cursoEditar['Area'] == 'Administración') ? 'selected' : ''; ?>>Administración</option>
+                        <option value="Generales" <?php echo ($cursoEditar && $cursoEditar['Area'] == 'Generales') ? 'selected' : ''; ?>>Generales</option>
+                    </select>
                 </div>
                 <div class="col-md-6">
                     <label for="nombre_curso" class="form-label">Nombre del Curso</label>
